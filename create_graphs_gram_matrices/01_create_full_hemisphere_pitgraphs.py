@@ -126,8 +126,10 @@ def compute_fullgraphs(hem):
 
             # read labels of nodes
             labels_path = op.join(fs_db_path, 'ML_deep_shallow', '%s_%s_deep_shallow_from_destrieux.gii' % (subject, hem))
-            labels_tex_gii = load(labels_path)
-            labels_tex = labels_tex_gii.darrays[0].data
+            # ST: create fake label textures because we do not need it and it is not available...
+            #labels_tex_gii = load(labels_path)
+            #labels_tex = labels_tex_gii.darrays[0].data
+            labels_tex = depth_tex
 
             g = graphs_construction(pits_inds, basins_tex, basins_area, depth_tex,
                                     mesh_coords, thickness_tex, pits_path, basins_path, labels_tex)
@@ -194,8 +196,10 @@ def graphs_construction(pits_inds, basins_tex, basins_area, depth_tex, mesh_coor
     # convert vector to matrix
     pits_depth = np.atleast_2d(pits_depth).T
 
-    pits_label = labels_tex[pits_inds]
-    pits_label = np.atleast_2d(pits_label).T
+    # ST: create fake labels
+    #pits_label = labels_tex[pits_inds]
+    #pits_label = np.atleast_2d(pits_label).T
+    pits_label = pits_depth
 
     # compute mean thickness in basin
     basins_thickness = np.zeros(n_pits)
