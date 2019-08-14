@@ -86,6 +86,7 @@ def compute_fullgraphs(hem):
     for subject in subjects_list:
         try:
             pitgraphs_path = op.join(fullgraphs_dir, 'full_%s_%s_pitgraph.gpickle' % (hem, subject))
+            print(pitgraphs_path)
             exists = op.isfile(pitgraphs_path)
             if exists:
                 continue
