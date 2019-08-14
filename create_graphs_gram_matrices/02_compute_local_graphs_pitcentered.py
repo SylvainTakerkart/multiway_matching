@@ -54,6 +54,11 @@ def compute_localgraphs(subject, hem, graph_type, graph_param):
         connlength = graph_param
 
     localgraphs_dir = op.join(analysis_dir,'local_graphs','{}_{:d}'.format(graph_type,graph_param),subject)
+    try:
+        os.makedirs(localgraphs_dir)
+        print('Creating new directory: {}'.format(localgraphs_dir))
+    except:
+        print('Output directory is {}'.format(localgraphs_dir))
 
     ###############################
     # reading full hemisphere graph
