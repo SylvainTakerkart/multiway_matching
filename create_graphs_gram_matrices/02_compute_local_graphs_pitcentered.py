@@ -35,8 +35,6 @@ subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051'
                  'OAS1_0377', 'OAS1_0385', 'OAS1_0396', 'OAS1_0403', 'OAS1_0409', 'OAS1_0435', 'OAS1_0439',
                  'OAS1_0450']
 
-subjects_list = ['OAS1_0006']
-
 # define directories
 db_name = 'OASIS'
 root_analysis_dir = '/hpc/meca/users/takerkart/multiway_graph_matching/'+ db_name
@@ -82,7 +80,7 @@ def compute_localgraphs(subject, hem, graph_type, graph_param):
         # extract the subgraph
         subG = G.subgraph(nearby_pits_inds)
         # save the subgraph
-        localgraph_path = op.join(localgraphs_dir,'localgraph_{}_pit{:03d}.gpickle.gz'.format(hem,current_pit))
+        localgraph_path = op.join(localgraphs_dir,'localgraph_{}_pit{:03d}.gpk.gz'.format(hem,current_pit))
         print('Saving local graph in {}'.format(localgraph_path))
         nx.write_gpickle(subG, localgraph_path)
 
