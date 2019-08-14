@@ -77,7 +77,7 @@ def compute_localgraphs(subject, hem, graph_type, graph_param):
         # extract the subgraph
         subG = G.subgraph(nearby_pits_inds)
         # save the subgraph
-        localgraph_path = op.join(localgraph_dir,'localpitgraph_{:03d}.gpickle.gz'.format(current_pit))
+        localgraph_path = op.join(localgraphs_dir,'localgraph_{}_pit{:03d}.gpickle.gz'.format(hem,current_pit))
         print('Saving local graph in {}'.format(localgraph_path))
         nx.write_gpickle(subG, localgraph_path)
 
@@ -86,8 +86,8 @@ def main():
     args = sys.argv[1:]
     
     if len(args) < 2:
-	print('Wrong number of arguments, run it as: %run 02_compute_local_graphs_pitcentered.py lh radius 50')
-	sys.exit(2)
+	    print('Wrong number of arguments, run it as: %run 02_compute_local_graphs_pitcentered.py lh radius 50')
+	    sys.exit(2)
     else:
         hem = args[0]
         graph_type = args[1]
