@@ -84,59 +84,59 @@ def compute_fullgraphs(hem):
         print('Output directory is %s' % fullgraphs_dir)
 
     for subject in subjects_list:
-        try:
-            pitgraphs_path = op.join(fullgraphs_dir, 'full_%s_%s_pitgraph.gpickle' % (hem, subject))
-            print(pitgraphs_path)
-            exists = op.isfile(pitgraphs_path)
-            if exists:
-                continue
-            else:
-                # get basins texture (-1 in poles; everything 0 or above is a real basin with one pit)
-                basins_path = op.join(input_data_dir, subject, '%s_%s_area50FilteredTexture.gii' % (param_string, BV_hem))
-                basins_tex_gii = load(basins_path)
-                basins_tex = basins_tex_gii.darrays[0].data
+        #try:
+        pitgraphs_path = op.join(fullgraphs_dir, 'full_%s_%s_pitgraph.gpickle' % (hem, subject))
+        print(pitgraphs_path)
+        exists = op.isfile(pitgraphs_path)
+        if exists:
+            continue
+        else:
+            # get basins texture (-1 in poles; everything 0 or above is a real basin with one pit)
+            basins_path = op.join(input_data_dir, subject, '%s_%s_area50FilteredTexture.gii' % (param_string, BV_hem))
+            basins_tex_gii = load(basins_path)
+            basins_tex = basins_tex_gii.darrays[0].data
 
-                # get pits texture (0 everywhere except single vertex with one where the pits are)
-                pits_path = op.join(input_data_dir, subject, '%s_%s_area50FilteredTexturePits.gii' % (param_string, BV_hem))
-                pits_tex_gii = load(pits_path)
-                pits_tex = pits_tex_gii.darrays[0].data
-                pits_inds = np.where(pits_tex == 1)[0]
+            # get pits texture (0 everywhere except single vertex with one where the pits are)
+            pits_path = op.join(input_data_dir, subject, '%s_%s_area50FilteredTexturePits.gii' % (param_string, BV_hem))
+            pits_tex_gii = load(pits_path)
+            pits_tex = pits_tex_gii.darrays[0].data
+            pits_inds = np.where(pits_tex == 1)[0]
 
-                # read depth of the pits
-                depth_path = op.join(input_data_dir, subject,
-                                     'dpfMap', '%s_dpf_0.03.gii' % (BV_hem))
-                depth_gii = load(depth_path)
-                depth_tex = depth_gii.darrays[0].data
+            # read depth of the pits
+            depth_path = op.join(input_data_dir, subject,
+                                 'dpfMap', '%s_dpf_0.03.gii' % (BV_hem))
+            depth_gii = load(depth_path)
+            depth_tex = depth_gii.darrays[0].data
 
-                # get area of basins
-                area_tex = basins_tex_gii.darrays[2].data
-                basins_area = area_tex[pits_inds]
-                # convert vector to matrix
-                basins_area = np.atleast_2d(basins_area).T
+            # get area of basins
+            area_tex = basins_tex_gii.darrays[2].data
+            basins_area = area_tex[pits_inds]
+            # convert vector to matrix
+            basins_area = np.atleast_2d(basins_area).T
 
-                # read triangulated spherical mesh and get coordinates of all vertices
-                mesh_path = os.path.join(fs_db_path, subject, 'surf', '%s.sphere.reg.gii' % hem)
-                mesh_gii = load(mesh_path)
-                mesh_coords = mesh_gii.darrays[0].data
+            # read triangulated spherical mesh and get coordinates of all vertices
+            mesh_path = os.path.join(fs_db_path, subject, 'surf', '%s.sphere.reg.gii' % hem)
+            mesh_gii = load(mesh_path)
+            mesh_coords = mesh_gii.darrays[0].data
 
-                # read thickness
-                thickness_path = op.join(fs_db_path, subject, 'surf', '%s.thickness.gii' % hem)
-                thickness_gii = load(thickness_path)
-                thickness_tex = thickness_gii.darrays[0].data
+            # read thickness
+            thickness_path = op.join(fs_db_path, subject, 'surf', '%s.thickness.gii' % hem)
+            thickness_gii = load(thickness_path)
+            thickness_tex = thickness_gii.darrays[0].data
 
-                # read labels of nodes
-                labels_path = op.join(fs_db_path, 'ML_deep_shallow', '%s_%s_deep_shallow_from_destrieux.gii' % (subject, hem))
-                labels_tex_gii = load(labels_path)
-                labels_tex = labels_tex_gii.darrays[0].data
+            # read labels of nodes
+            labels_path = op.join(fs_db_path, 'ML_deep_shallow', '%s_%s_deep_shallow_from_destrieux.gii' % (subject, hem))
+            labels_tex_gii = load(labels_path)
+            labels_tex = labels_tex_gii.darrays[0].data
 
-                g = graphs_construction(pits_inds, basins_tex, basins_area, depth_tex,
-                                        mesh_coords, thickness_tex, pits_path, basins_path, labels_tex)
+            g = graphs_construction(pits_inds, basins_tex, basins_area, depth_tex,
+                                    mesh_coords, thickness_tex, pits_path, basins_path, labels_tex)
 
-                # write graph
-                G = transform_to_networks(g)
-                nx.write_gpickle(G, pitgraphs_path)
-        except:
-            print('cannot load data for subject '+subject)
+            # write graph
+            G = transform_to_networks(g)
+            nx.write_gpickle(G, pitgraphs_path)
+        #except:
+        #    print('cannot load data for subject '+subject)
 
 
 def graphs_construction(pits_inds, basins_tex, basins_area, depth_tex, mesh_coords,
