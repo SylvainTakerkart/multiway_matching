@@ -40,10 +40,9 @@ db_name = 'OASIS'
 fs_db_path = '/hpc/meca/data/OASIS/FS_OASIS'
 input_data_dir = '/hpc/meca/data/OASIS/SulcalPits/OASIS_database/neuroImage_paper/OASIS_pits/subjects'
 
-root_analysis_dir = '/hpc/meca/users/auzias/pits_graph_clustering/'+ db_name
+#root_analysis_dir = '/hpc/meca/users/auzias/pits_graph_clustering/'+ db_name
 root_analysis_dir = '/hpc/meca/users/takerkart/multiway_graph_matching/'+ db_name
 experiment = 'oasis_pits02'
-
 analysis_dir = op.join(root_analysis_dir, experiment)
 
 param_string = 'dpfMap/alpha_0.03/an0_dn20_r1.5/alpha0.03_an0_dn20_r1.5'
