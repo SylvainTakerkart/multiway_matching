@@ -59,7 +59,8 @@ graphs_list = [nx.read_gpickle(path) for path in paths_list]
 g1 = graphs_list[2]
 g2 = graphs_list[28]
 
-kernel = sxdnewkernel(x_sigma = 0.5, d_sigma = 0.5, subkernels=True)
+# note that we use x_sigma=50 here because the coordinates of the freesurfer sphere are between 0 and 100
+kernel = sxdnewkernel(x_sigma = 50, d_sigma = 0.5, subkernels=True)
 print(kernel.evaluate(g1,g2))
 
 
