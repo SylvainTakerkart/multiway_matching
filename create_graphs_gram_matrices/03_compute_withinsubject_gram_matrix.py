@@ -7,6 +7,8 @@ import os.path as op
 import os
 import numpy as np
 import sys
+import glob
+
 
 import scipy.spatial.distance as sd
 import networkx as nx
@@ -39,6 +41,18 @@ root_analysis_dir = '/hpc/meca/users/takerkart/multiway_graph_matching/'+ db_nam
 experiment = 'oasis_pits02'
 analysis_dir = op.join(root_analysis_dir, experiment)
 fullgraphs_dir = op.join(analysis_dir, 'full_hemisphere_pitgraphs')
+
+
+# read graphs
+subject = 'OAS1_0059'
+hem = 'lh'
+graph_type = 'radius'
+graph_param = 60
+
+localgraphs_dir = op.join(analysis_dir, 'local_graphs', '{}_{:d}'.format(graph_type, graph_param), subject)
+paths_list = sorted(glob.glob(op.join(localgraphs_dir,'localgraph_{}_pit*.gpk.gz'.format(hem))))
+
+graphs_list = [nx.read_gpickle(path) for path in paths_list]
 
 def compute_localgraphs(subject, hem, graph_type, graph_param):
 
