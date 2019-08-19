@@ -61,50 +61,12 @@ g2 = graphs_list[28]
 
 # note that we use x_sigma=50 here because the coordinates of the freesurfer sphere are between 0 and 100
 kernel = sxdnewkernel(x_sigma = 50, d_sigma = 0.5, subkernels=True)
-print(kernel.evaluate(g1,g2))
+#print(kernel.evaluate(g1,g2))
 
-
-def compute_localgraphs(subject, hem, graph_type, graph_param):
-
-    if graph_type == 'nn':
-        n_neighbors = graph_param
-    elif graph_type == 'radius':
-        radius = graph_param
-    elif graph_type == 'conn':
-        connlength = graph_param
-
-    localgraphs_dir = op.join(analysis_dir,'local_graphs','{}_{:d}'.format(graph_type,graph_param),subject)
-    try:
-        os.makedirs(localgraphs_dir)
-        print('Creating new directory: {}'.format(localgraphs_dir))
-    except:
-        print('Output directory is {}'.format(localgraphs_dir))
-
-    ###############################
-    # reading full hemisphere graph
-    ###############################
-    pitgraphs_path = op.join(fullgraphs_dir, 'full_{}_{}_pitgraph.gpickle'.format(hem, subject))
-    G = nx.read_gpickle(pitgraphs_path)
-
-    ##########################
-    # compute all local graphs
-    ##########################
-    for current_pit in range(G.number_of_nodes()):
-        coords_dict = nx.get_node_attributes(G,'coord')
-        coords = np.array([coords_dict[i] for i in G.nodes()])
-        center_coords = coords[current_pit]
-        if graph_type == 'radius':
-            # find all pits located within the given radius from the current pit
-            pits_distances = sd.cdist(np.atleast_2d(center_coords), coords).squeeze()
-            nearby_pits_inds = np.where(pits_distances < radius)[0]
-        else:
-            print('Graph type not supported for now, please use radius as the graph type')
-        # extract the subgraph
-        subG = G.subgraph(nearby_pits_inds)
-        # save the subgraph
-        localgraph_path = op.join(localgraphs_dir,'localgraph_{}_pit{:03d}.gpk.gz'.format(hem,current_pit))
-        print('Saving local graph in {}'.format(localgraph_path))
-        nx.write_gpickle(subG, localgraph_path)
+a = []
+for g1 in graphs_list:
+    for g2 in graphs_list:
+        a.append(kernel.evaluate(g1,g2)[0])
 
 
 def main():
