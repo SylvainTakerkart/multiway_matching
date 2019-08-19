@@ -5,7 +5,7 @@ Created on Thu Aug  2 13:31:44 2012
 @author: Sylvain Takerkart
 """
 
-from kernels import *
+from .kernels import gaussian
 import numpy as np
 import networkx as nx
 
