@@ -9,9 +9,11 @@ import numpy as np
 import sys
 import glob
 
-
 import scipy.spatial.distance as sd
 import networkx as nx
+
+from pitskernels.pitskernel_networkx import sxdnewkernel
+
 
 
 subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051', 'OAS1_0054', 'OAS1_0055',
@@ -53,6 +55,13 @@ localgraphs_dir = op.join(analysis_dir, 'local_graphs', '{}_{:d}'.format(graph_t
 paths_list = sorted(glob.glob(op.join(localgraphs_dir,'localgraph_{}_pit*.gpk.gz'.format(hem))))
 
 graphs_list = [nx.read_gpickle(path) for path in paths_list]
+
+g1 = graphs_list[2]
+g2 = graphs_list[28]
+
+kernel = sxdnewkernel(x_sigma = 0.5, d_sigma = 0.5, subkernels=True)
+print(kernel.evaluate(g1,g2))
+
 
 def compute_localgraphs(subject, hem, graph_type, graph_param):
 
