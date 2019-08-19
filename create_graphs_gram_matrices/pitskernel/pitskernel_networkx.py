@@ -52,11 +52,11 @@ class sxdnewkernel:
         A2 = nx.to_numpy_matrix(g2)
 
         # depth contribution using gaussian kernel
-        K_dd = rbf_kernel(D1,D2,gamma = 0.5 / (d_sigma**2)).flatten()
+        K_dd = rbf_kernel(D1,D2,gamma = 0.5 / (self.d_sigma**2)).flatten()
         K_d = vprod(K_dd)  # matrix product of the two vectors K_dd.T and K_dd
 
         # geometrical (coordinates) contribution using gaussian kernel
-        K_xx = rbf_kernel(X1,X2,gamma = 0.5 / (x_sigma**2)).flatten()
+        K_xx = rbf_kernel(X1,X2,gamma = 0.5 / (self.x_sigma**2)).flatten()
         K_x = vprod(K_xx)
 
         # structural contribution using linear kernel on binary values
