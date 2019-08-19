@@ -49,9 +49,9 @@ class sxdnewkernel:
         coords_dict = nx.get_node_attributes(g2, 'coord')
         X2 = np.array([coords_dict[i] for i in g2.nodes()])
         depth_dict = nx.get_node_attributes(g1,'depth')
-        D1 = np.array([depth_dict[i] for i in g1.nodes()])
+        D1 = np.atleast_2d(np.array([depth_dict[i] for i in g1.nodes()]))
         depth_dict = nx.get_node_attributes(g2,'depth')
-        D2 = np.array([depth_dict[i] for i in g2.nodes()])
+        D2 = np.atleast_2d(np.array([depth_dict[i] for i in g2.nodes()]))
         A1 = nx.to_numpy_matrix(g1)
         A2 = nx.to_numpy_matrix(g2)
 
