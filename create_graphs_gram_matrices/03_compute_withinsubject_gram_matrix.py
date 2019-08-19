@@ -12,7 +12,7 @@ import glob
 import scipy.spatial.distance as sd
 import networkx as nx
 
-from pitskernels.pitskernel_networkx import sxdnewkernel
+from pitskernel.pitskernel_networkx import sxdnewkernel
 
 
 
