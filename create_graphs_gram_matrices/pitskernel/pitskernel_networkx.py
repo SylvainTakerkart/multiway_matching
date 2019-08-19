@@ -46,8 +46,8 @@ class sxdnewkernel:
         # extract the vectors and matrices necessary to compute the kernel from the networkx graphs
         coords_dict = nx.get_node_attributes(g1,'coord')
         X1 = np.array([coords_dict[i] for i in g1.nodes()]) / 100.
-        coords_dict = nx.get_node_attributes(g2, 'coord') / 100.
-        X2 = np.array([coords_dict[i] for i in g2.nodes()])
+        coords_dict = nx.get_node_attributes(g2, 'coord')
+        X2 = np.array([coords_dict[i] for i in g2.nodes()]) / 100.
         depth_dict = nx.get_node_attributes(g1,'depth')
         D1 = np.atleast_2d(np.array([depth_dict[i] for i in g1.nodes()])).T
         depth_dict = nx.get_node_attributes(g2,'depth')
