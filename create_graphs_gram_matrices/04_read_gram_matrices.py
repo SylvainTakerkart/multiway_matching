@@ -1,13 +1,18 @@
 import os.path as op
-import os
-import numpy as np
-import glob
 import pickle
-import networkx as nx
-
-from pitskernel.pitskernel_networkx import sxdnewkernel
 
 
+# parameters
+hem = 'lh'
+graph_type = 'radius'
+graph_param = 60
+
+# define directories
+db_name = 'OASIS'
+root_analysis_dir = '/hpc/meca/users/takerkart/multiway_graph_matching/'+ db_name
+experiment = 'oasis_pits02'
+analysis_dir = op.join(root_analysis_dir, experiment)
+gram_dir = op.join(analysis_dir, 'withinsubj_gram_matrices','{}_{:d}'.format(graph_type,graph_param))
 
 subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051', 'OAS1_0054', 'OAS1_0055',
                  'OAS1_0057', 'OAS1_0059', 'OAS1_0061', 'OAS1_0077', 'OAS1_0079', 'OAS1_0080', 'OAS1_0087',
@@ -30,67 +35,22 @@ subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051'
                  'OAS1_0377', 'OAS1_0385', 'OAS1_0396', 'OAS1_0403', 'OAS1_0409', 'OAS1_0435', 'OAS1_0439',
                  'OAS1_0450']
 
-# parameters
-hem = 'lh'
-graph_type = 'radius'
-graph_param = 60
+# choice of which kernel we will be using to perform the matching...
+#subkernel_ind = 0 # using the full info: structure, coordinates, depth
+#subkernel_ind = 1 # using coordinates, depth
+#subkernel_ind = 2 # using structure, depth
+#subkernel_ind = 3 # using structure, coordinates
+#subkernel_ind = 4 # using structure
+#subkernel_ind = 5 # using coordinates
+subkernel_ind = 6 # using depth
+# the relevant choices are:
+# 5 (this should give us a baseline)
+# 3 (this should improve things a bit by adding the structure of the graph in the kernel computation)
+# 0 (hopefully adding the depth should help a bit more)
 
-# define directories
-db_name = 'OASIS'
-root_analysis_dir = '/hpc/meca/users/takerkart/multiway_graph_matching/'+ db_name
-experiment = 'oasis_pits02'
-analysis_dir = op.join(root_analysis_dir, experiment)
-fullgraphs_dir = op.join(analysis_dir, 'full_hemisphere_pitgraphs')
-gram_dir = op.join(analysis_dir, 'withinsubj_gram_matrices','{}_{:d}'.format(graph_type,graph_param))
-try:
-    os.makedirs(gram_dir)
-    print('Creating new directory: {}'.format(gram_dir))
-except:
-    print('Output directory is {}'.format(gram_dir))
-
-
+K_list = []
 for subject in subjects_list:
-
-    localgraphs_dir = op.join(analysis_dir, 'local_graphs', '{}_{:d}'.format(graph_type, graph_param), subject)
-    paths_list = sorted(glob.glob(op.join(localgraphs_dir,'localgraph_{}_pit*.gpk.gz'.format(hem))))
-
-    graphs_list = [nx.read_gpickle(path) for path in paths_list]
-    n_pits = len(graphs_list)
-
-    g1 = graphs_list[2]
-    g2 = graphs_list[28]
-
-    # note that we use x_sigma=50 here because the coordinates of the freesurfer sphere are between 0 and 100
-    kernel = sxdnewkernel(x_sigma = 50, d_sigma = 0.5, subkernels=True)
-
-    K = np.zeros([n_pits, n_pits,7])
-    for i in range(n_pits):
-        for j in range(i,n_pits):
-            K[i,j,:] = kernel.evaluate(graphs_list[i], graphs_list[j])
-            K[j,i,:] = np.copy(K[i,j,:])
-
     gram_path = op.join(gram_dir,'K_{}_{}.pck'.format(subject,hem))
-    f = open(gram_path,'wb')
-    pickle.dump(K,f)
-    f.close()
-
-'''
-def main():
-    args = sys.argv[1:]
-    
-    if len(args) < 2:
-	    print('Wrong number of arguments, run it as: %run 02_compute_local_graphs_pitcentered.py lh radius 50')
-	    sys.exit(2)
-    else:
-        hem = args[0]
-        graph_type = args[1]
-        graph_param = int(args[2])
-
-    for subject in subjects_list:
-        compute_localgraphs(subject,hem,graph_type,graph_param)
-
-
-if __name__ == "__main__":
-    main()
-'''
-
+    f = open(gram_path,'rb')
+    K = pickle.load(f)
+    K_list.append(K[:,:,subkernel_ind])
