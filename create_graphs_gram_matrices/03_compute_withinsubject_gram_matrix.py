@@ -6,10 +6,8 @@
 import os.path as op
 import os
 import numpy as np
-import sys
 import glob
-
-import scipy.spatial.distance as sd
+import pickle
 import networkx as nx
 
 from pitskernel.pitskernel_networkx import sxdnewkernel
@@ -36,8 +34,6 @@ subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051'
                  'OAS1_0346', 'OAS1_0350', 'OAS1_0359', 'OAS1_0361', 'OAS1_0368', 'OAS1_0370', 'OAS1_0376',
                  'OAS1_0377', 'OAS1_0385', 'OAS1_0396', 'OAS1_0403', 'OAS1_0409', 'OAS1_0435', 'OAS1_0439',
                  'OAS1_0450']
-
-subjects_list = ['OAS1_0059']
 
 # parameters
 hem = 'lh'
@@ -78,7 +74,7 @@ for subject in subjects_list:
             K[i,j,:] = kernel.evaluate(graphs_list[i], graphs_list[j])
             K[j,i,:] = np.copy(K[i,j,:])
 
-    gram_path = op.join(gram_dir,'K_{}.pck'.format(hem))
+    gram_path = op.join(gram_dir,'K_{}_{}.pck'.format(subject,hem))
     f = open(gram_path,'wb')
     pickle.dump(K,f)
     f.close()
