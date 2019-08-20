@@ -37,38 +37,53 @@ subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051'
                  'OAS1_0377', 'OAS1_0385', 'OAS1_0396', 'OAS1_0403', 'OAS1_0409', 'OAS1_0435', 'OAS1_0439',
                  'OAS1_0450']
 
+subjects_list = ['OAS1_0059']
+
+# parameters
+hem = 'lh'
+graph_type = 'radius'
+graph_param = 60
+
 # define directories
 db_name = 'OASIS'
 root_analysis_dir = '/hpc/meca/users/takerkart/multiway_graph_matching/'+ db_name
 experiment = 'oasis_pits02'
 analysis_dir = op.join(root_analysis_dir, experiment)
 fullgraphs_dir = op.join(analysis_dir, 'full_hemisphere_pitgraphs')
+gram_dir = op.join(analysis_dir, 'withinsubj_gram_matrices','{}_{:d}'.format(graph_type,graph_param))
+try:
+    os.makedirs(gram_dir)
+    print('Creating new directory: {}'.format(gram_dir))
+except:
+    print('Output directory is {}'.format(gram_dir))
 
 
-# read graphs
-subject = 'OAS1_0059'
-hem = 'lh'
-graph_type = 'radius'
-graph_param = 60
+for subject in subjects_list:
 
-localgraphs_dir = op.join(analysis_dir, 'local_graphs', '{}_{:d}'.format(graph_type, graph_param), subject)
-paths_list = sorted(glob.glob(op.join(localgraphs_dir,'localgraph_{}_pit*.gpk.gz'.format(hem))))
+    localgraphs_dir = op.join(analysis_dir, 'local_graphs', '{}_{:d}'.format(graph_type, graph_param), subject)
+    paths_list = sorted(glob.glob(op.join(localgraphs_dir,'localgraph_{}_pit*.gpk.gz'.format(hem))))
 
-graphs_list = [nx.read_gpickle(path) for path in paths_list]
+    graphs_list = [nx.read_gpickle(path) for path in paths_list]
+    n_pits = len(graphs_list)
 
-g1 = graphs_list[2]
-g2 = graphs_list[28]
+    g1 = graphs_list[2]
+    g2 = graphs_list[28]
 
-# note that we use x_sigma=50 here because the coordinates of the freesurfer sphere are between 0 and 100
-kernel = sxdnewkernel(x_sigma = 50, d_sigma = 0.5, subkernels=True)
-#print(kernel.evaluate(g1,g2))
+    # note that we use x_sigma=50 here because the coordinates of the freesurfer sphere are between 0 and 100
+    kernel = sxdnewkernel(x_sigma = 50, d_sigma = 0.5, subkernels=True)
 
-a = []
-for g1 in graphs_list:
-    for g2 in graphs_list:
-        a.append(kernel.evaluate(g1,g2)[0])
+    K = np.zeros([n_pits, n_pits,7])
+    for i in range(n_pits):
+        for j in range(i,n_pits):
+            K[i,j,:] = kernel.evaluate(graphs_list[i], graphs_list[j])
+            K[j,i,:] = np.copy(K[i,j,:])
 
+    gram_path = op.join(gram_dir,'K_{}.pck'.format(hem))
+    f = open(gram_path,'wb')
+    pickle.dump(K,f)
+    f.close()
 
+'''
 def main():
     args = sys.argv[1:]
     
@@ -86,5 +101,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+'''
 
